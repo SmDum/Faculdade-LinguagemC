@@ -37,7 +37,7 @@ void lerValores(int *valores)
 
 void ordenarValores(int *valores)
 {
-    // Implementa��o do Bubble Sort
+    // Implementação do Bubble Sort
     for (int i = 0; i < NUM_VALORES - 1; i++)
     {
         for (int j = 0; j < NUM_VALORES - i - 1; j++)
