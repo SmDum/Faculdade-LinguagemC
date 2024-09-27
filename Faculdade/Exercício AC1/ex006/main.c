@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <locale.h>
 
+void aloca(int **p, int tam);
+void recebe(int *p);
+void mostra(int *p, int tam);
+int negativos(int *p, int tam, int qneg, int **nneg);
+
 int main()
 {
     setlocale(LC_ALL, "Portuguese");
