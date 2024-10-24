@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <locale.h>
 
 typedef struct hospede
@@ -73,7 +74,7 @@ int main()
             mostra_hospede(p_quarto, cont);
             break;
         }
-    
+
     } while (opc != 5);
 
     free(p_quarto);
@@ -103,28 +104,85 @@ void cadastra_quarto(quarto *p_quarto, int quant_quartos)
 {
     int i;
 
-    for(i=0;i<quant_quartos;i++, p_quarto++)
+    for (i = 0; i < quant_quartos; i++, p_quarto++)
     {
-        p_quarto -> num = i+1;
-        p_quarto -> status = 'L';
-        
-        if(i<5)
+        p_quarto->num = i + 1;
+        p_quarto->status = 'L';
+
+        if (i < 5)
         {
-            p_quarto -> categoria = 'S';
+            p_quarto->categoria = 'S';
         }
         else
         {
-            p_quarto -> categoria = 'F';
+            p_quarto->categoria = 'F';
         }
     }
 }
 
-void cadastra_hospede(hospede *p_hospede, quarto *quarto, int quant_quarto);
+void cadastra_hospede(hospede *p_hospede, quarto *quarto, int quant_quarto)
+{
 
-int busca_quarto(quarto *p_quarto, int quant_quarto, char categoria);
-int busca_hospede(hospede *p_hospede, int quant_hosp, int num_quarto);
+    printf("\nNome: ");
+    gets(p_hospede->nome);
+    fflush(stdin);
 
-void check_out(hospede *p_hospede, int quant_hosp, quarto *quarto);
+    do
+    {
+        pritnf("Digite o número de acompanhantes: ");
+        scanf("%i", &(p_hospede->acompanhante));
+        fflush(stdin);
+    } while (p_hospede->acompanhante < 0 || p_hospede->acompanhante > 3);
 
-void mostra_quarto(quarto *p_quarto, int quant_quarto);
-void mostra_hospede(hospede *p_hospede, int quant_hospede);
+    if (p_hospede->acompanhante == 0)
+    {
+        p_hospede->categoria = 'S';
+    }
+    else
+    {
+        p_hospede->categoria = 'F';
+    }
+
+    printf("\nDias: ");
+    scanf("%i", &(p_hospede->dias));
+    fflush(stdin);
+
+    p_hospede->quarto = busca_quarto(quarto, quant_quarto, p_hospede->categoria);
+
+    if(p_hospede->quarto==-1)
+    {
+        printf("\nNão há quartos disponíveis na categoria desejada...");
+    }
+    else
+    {
+        printf("\nCadastro Realizado! - Seu quarto é o %i", p_hospede->quarto);
+    }
+
+    printf("\n\n\n");
+	system("pause");
+}
+
+int busca_quarto(quarto *p_quarto, int quant_quarto, char categoria)
+{
+
+}
+
+int busca_hospede(hospede *p_hospede, int quant_hosp, int num_quarto)
+{
+
+}
+
+void check_out(hospede *p_hospede, int quant_hosp, quarto *p_quarto)
+{
+
+}
+
+void mostra_quarto(quarto *p_quarto, int quant_quarto)
+{
+
+}
+
+void mostra_hospede(hospede *p_hospede, int quant_hospede)
+{
+    
+}
