@@ -171,7 +171,7 @@ void cadastro_militar(militar *m, carreira *c, int qc)
 	}
 	else
 	{
-		printf("Militar cadastrado com sucesso - Patente: %i\tSalário: %.2f\n", (m+pos)->numreg, (c + (m->numreg) - 1)->salario);
+		printf("Militar cadastrado com sucesso - Patente: %i\tSalário: %.2f\n", (m+pos)->numreg, (c + ((m+pos)->numreg) - 1)->salario);
 	}
 	system("pause");
 } // cadastro militar
