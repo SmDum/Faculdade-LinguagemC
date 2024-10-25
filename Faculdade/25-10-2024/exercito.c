@@ -163,7 +163,7 @@ void cadastro_militar(militar *m, carreira *c, int qc)
 	fflush(stdin);
 	maiuscula(aux_pat);
 
-	m->numreg = busca_patente(c, qc, aux_org, aux_pat);
+	(m+pos)->numreg = busca_patente(c, qc, aux_org, aux_pat);
 
 	if (m->numreg == -1)
 	{
@@ -171,7 +171,7 @@ void cadastro_militar(militar *m, carreira *c, int qc)
 	}
 	else
 	{
-		printf("Militar cadastrado com sucesso - Patente: %i\tSalário: %.2f\n", m->numreg, (c + (m->numreg) - 1)->salario);
+		printf("Militar cadastrado com sucesso - Patente: %i\tSalário: %.2f\n", (m+pos)->numreg, (c + (m->numreg) - 1)->salario);
 	}
 	system("pause");
 } // cadastro militar
