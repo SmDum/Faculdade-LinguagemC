@@ -59,13 +59,10 @@ int main()
             if (pos == -1)
             {
                 aloca_hospede(&p_hospede, cont + 1);
-                cadastra_hospede(p_hospede + cont, p_quarto, quant);
+                pos = cont;
                 cont++;
             }
-            else
-            {
-                cadastra_hospede(p_hospede + pos, p_quarto, quant);
-            }
+            cadastra_hospede(p_hospede + pos, p_quarto, quant);
             break;
 
         case 2:
@@ -135,7 +132,7 @@ void cadastra_hospede(hospede *p_hospede, quarto *quarto, int quant_quarto)
 
     do
     {
-        printf("Digite o número de acompanhantes: ");
+        printf("Digite o número de acompanhantes(max. 3): ");
         scanf("%i", &(p_hospede->acompanhante));
         fflush(stdin);
     } while (p_hospede->acompanhante < 0 || p_hospede->acompanhante > 3);
@@ -188,7 +185,7 @@ int busca_hospede(hospede *p_hospede, int quant_hosp, int num_quarto)
 
     int i;
 
-    for (i = 0; i < quant_hosp; i++, p_hospede++)
+    for (i = 0; i <= quant_hosp; i++, p_hospede++)
     {
         if (p_hospede->quarto == num_quarto)
         {
@@ -203,7 +200,7 @@ void check_out(hospede *p_hospede, int quant_hosp, quarto *p_quarto)
     int aux_quarto, achou;
     float valor;
 
-    printf("\nDigite o Quarto: ");
+    printf("\nDigite o quarto a ser finalizado: ");
     scanf("%i", &aux_quarto);
     fflush(stdin);
 
@@ -211,33 +208,25 @@ void check_out(hospede *p_hospede, int quant_hosp, quarto *p_quarto)
 
     if (achou == -1)
     {
-        printf("\nQuarto Inexistente...");
-        system("pause");
-        return; // Sai da função se o quarto não for encontrado
+        printf("\nQuarto Inválido...\n"); // Sai da função se o quarto não for encontrado
     }
 
-    // Cálculo do valor
-    if ((p_hospede + achou)->categoria == 'S')
-        valor = (p_hospede + achou)->dias * 85;
     else
-        valor = (p_hospede + achou)->dias * (((p_hospede + achou)->acompanhante) + 1) * 65;
+    {
+        if ((p_hospede + achou)->categoria == 'S')
+            valor = (p_hospede + achou)->dias * 85;
+        else
+            valor = (p_hospede + achou)->dias * (((p_hospede + achou)->acompanhante) + 1) * 65;
 
-    // Exibir informações
-    printf("\nNome: %s\nAcompanhantes: %i\nCategoria: %c\nDias: %i\nValor a ser pago: R$ %.2f\n\n",
-           (p_hospede + achou)->nome, (p_hospede + achou)->acompanhante,
-           (p_hospede + achou)->categoria, (p_hospede + achou)->dias, valor);
+        // Exibir informações
+        printf("\nNome: %s\nAcompanhantes: %i\nCategoria: %c\nDias: %i\nValor a ser pago: R$ %.2f\n\n",
+               (p_hospede + achou)->nome, (p_hospede + achou)->acompanhante,
+               (p_hospede + achou)->categoria, (p_hospede + achou)->dias, valor);
+               (p_hospede + achou)->quarto = -1;
+    }
 
     // Liberar o quarto
-    int num_quarto = (p_hospede + achou)->quarto; // Pega o número do quarto do hóspede
-    for (int i = 0; i < quant_hosp; i++)          // Corrigido para `quant_quarto`
-    {
-        if ((p_quarto + i)->num == num_quarto)
-        {
-            (p_quarto + i)->status = 'L'; // Atualiza o status do quarto para livre
-            break;
-        }
-    }
-
+    (p_quarto + aux_quarto-1)->status = 'L';
     system("pause");
 }
 
