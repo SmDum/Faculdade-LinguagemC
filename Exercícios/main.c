@@ -185,7 +185,7 @@ int busca_hospede(hospede *p_hospede, int quant_hosp, int num_quarto)
 
     int i;
 
-    for (i = 0; i <= quant_hosp; i++, p_hospede++)
+    for (i = 0; i < quant_hosp; i++, p_hospede++)
     {
         if (p_hospede->quarto == num_quarto)
         {
