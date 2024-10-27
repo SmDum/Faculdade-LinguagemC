@@ -1,221 +1,202 @@
+/*
+Controle de Vendas: Crie um programa para gerenciar as vendas de uma loja. O sistema deve permitir o cadastro de vendas, adicionar produtos à venda, e gerar um relatório final da venda. Utilize alocação dinâmica e ponteiros.
+Funções:
+[1] Cadastro de Venda - Receber o ID da venda e permitir a adição de produtos, com seus códigos e quantidades, calculando o total da venda.
+[2] Exibir Venda - Permitir consultar uma venda pelo ID e exibir os produtos vendidos e o total.
+struct venda {
+    int idVenda;
+    char produto[50];
+    int qtdProdutos;
+    int preco;
+    float total;
+};
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <locale.h>
 #include <string.h>
+#include <locale.h>
 
-typedef struct produto
+typedef struct venda
 {
-    int codigo;
-    char nome[50];
-    float preco;
-    int quantidade;
-} produto;
+    int idVenda;
+    char produto[50];
+    int qtdProdutos;
+    int preco;
+    float total;
+} venda;
 
-void aloca(produto **p_produto, int qtd_produtos);
-void cadastra(produto *p_produto, int qtd_produtos);
-void cadastra_produto(produto *p_produto, int qtd_produtos, int *cont);
-produto *busca_produto(produto *p_produto, int qtd_produtos);
-void muda_estoque(produto *p_produto, int qtd_produtos);
-void mostra_estoque(produto *p_produto, int qtd_produtos);
-void remove_produto(produto *p_produto, int *qtd_produtos);
+void aloca(venda **p_venda, int qtd);
+void cadastro(venda *p_venda, int qtd);
+void cadastro_venda(venda *p_venda, int qtd);
+int busca_produto(venda *p_venda, int qtd);
+void exibir_venda(venda *p_venda, int qtd);
+void mostra_vendas(venda *p_venda, int qtd);
+void remover_produto(venda *p_venda, int qtd);
 
 int main()
 {
     setlocale(LC_ALL, "portuguese");
 
-    produto *p_produto = NULL;
-    int qtd = 20, cont = 0, opc;
-
-    aloca(&p_produto, qtd);
-    cadastra(p_produto, qtd);
+    int opc, qtd = 15, pos, cont = 0;
+    venda *produto = NULL;
 
     do
     {
-        printf("\n[1] - Cadastro de Produto\n[2] - Atualização de Estoque\n[3] - Ver Estoque\n[4] - Remover Produto\n[5] - Sair\nOpção: ");
+        aloca(&produto, qtd);
+        cadastro(produto, qtd);
+
+        printf("[1]-Cadastro de Venda\n[2] - Busca Produto\n[3] - Remover Produto\n[4] - Exibir Vendas\n[5] - Sair\n\n");
         scanf("%i", &opc);
-        fflush(stdin);
 
         switch (opc)
         {
         case 1:
-            cadastra_produto(p_produto, qtd, &cont);
+            pos = busca_produto(produto, qtd);
+            if (pos == -1)
+            {
+                aloca(&produto, cont + 1);
+                pos = cont;
+                cont++;
+            }
+            cadastro_venda(produto + pos, qtd);
             system("pause");
             system("cls");
             break;
 
         case 2:
-            muda_estoque(p_produto, qtd);
+            exibir_venda(produto, qtd);
             system("pause");
             system("cls");
             break;
 
         case 3:
-            mostra_estoque(p_produto, qtd);
+            remover_produto(produto, qtd);
             system("pause");
             system("cls");
             break;
 
         case 4:
-            remove_produto(p_produto, &cont);
+            mostra_vendas(produto, qtd);
             system("pause");
             system("cls");
             break;
 
-        case 5:
-            printf("Saindo do sistema...\n");
-            break;
-
         default:
-            printf("\nOpção Inválida...");
             break;
         }
     } while (opc != 5);
 
-    free(p_produto);
-
     return 0;
 }
 
-void aloca(produto **p_produto, int qtd_produtos)
+void aloca(venda **p_venda, int qtd)
 {
-    if ((*p_produto = (produto *)realloc(*p_produto, qtd_produtos * sizeof(produto))) == NULL)
+    if ((*p_venda = (venda *)realloc(*p_venda, qtd * sizeof(venda))) == NULL)
     {
         printf("\nErro ao alocar memória...");
         exit(1);
     }
 }
-void cadastra(produto *p_produto, int qtd_produtos)
+void cadastro(venda *p_venda, int qtd)
 {
-    for (produto *p = p_produto; p < p_produto + qtd_produtos; p++)
+    int i;
+
+    for (i = 0; i < qtd; i++, p_venda++)
     {
-        p->codigo = (p - p_produto) + 1;
-        strcpy(p->nome, "-");
-        p->preco = 0.00;
-        p->quantidade = 0;
+        p_venda->idVenda = i;
+        strcpy(p_venda->produto, "-");
+        p_venda->qtdProdutos = 0;
+        p_venda->total = 0.0;
     }
 }
 
-void cadastra_produto(produto *p_produto, int qtd_produtos, int *cont)
+void cadastro_venda(venda *p_venda, int qtd)
 {
-    int encontrou_vazio = 0;
+    printf("\nNome do Produto: ");
+    gets(p_venda->produto);
+    fflush(stdin);
 
-    for (produto *p = p_produto; p < p_produto + qtd_produtos; p++)
+    printf("\nQuantidade de Produtos: ");
+    scanf("%i", &(p_venda->qtdProdutos));
+    fflush(stdin);
+
+    printf("\nPreço: ");
+    scanf("%i", &(p_venda->preco));
+    fflush(stdin);
+
+    p_venda->idVenda = busca_produto(p_venda, qtd);
+    if (p_venda->idVenda == -1)
+        printf("\nProduto Inválido...\n\n");
+    else
+        printf("\nCadastro com sucesso - Produto = %i\n\n", p_venda->idVenda);
+    printf("\n\n\n");
+    system("pause");
+}
+
+int busca_produto(venda *p_venda, int qtd)
+{
+    int i, cod;
+
+    printf("\nDigite o código do produto a ser buscado: ");
+    scanf("%i", &cod);
+
+    for (i = 0; i < qtd; i++, p_venda++)
     {
-        if (strcmp(p->nome, "-") == 0)
+        if(cod == p_venda->idVenda)
         {
-            encontrou_vazio = 1;
-            printf("\nNome do Produto: ");
-            fgets(p->nome, sizeof(p->nome), stdin);
-            p->nome[strcspn(p->nome, "\n")] = 0; // Remover newline
-            fflush(stdin);
-
-            printf("\nPreço: ");
-            scanf("%f", &p->preco);
-            fflush(stdin);
-
-            printf("\nQuantidade: ");
-            scanf("%i", &p->quantidade);
-            fflush(stdin);
-
-            (*cont)++;
-            printf("Produto cadastrado com o código %d.\n", p->codigo);
-            break;
+            return i;
         }
     }
-
-    if (!encontrou_vazio)
-    {
-        printf("Estoque cheio! Não é possível cadastrar mais produtos.\n");
-    }
+    return -1;
 }
 
-produto *busca_produto(produto *p_produto, int qtd_produtos)
+void exibir_venda(venda *p_venda, int qtd)
 {
-    int codigo;
-    printf("\nDigite o código do produto que deseja buscar: ");
-    scanf("%i", &codigo);
+    int achou = busca_produto(p_venda, qtd);
 
-    for (produto *p = p_produto; p < p_produto + qtd_produtos; p++)
+    if (achou == -1)
     {
-        if (p->codigo == codigo)
-        {
-            return p;
-        }
-    }
-    return NULL;
-}
-
-void muda_estoque(produto *p_produto, int qtd_produtos)
-{
-    produto *p = busca_produto(p_produto, qtd_produtos);
-    if (p == NULL)
-    {
-        printf("\nProduto não encontrado...");
+        printf("\nProduto Inválido");
     }
     else
     {
-        int opc;
-        printf("\nProduto: %s\nPreço: %.2f\nQuantidade: %i\n", p->nome, p->preco, p->quantidade);
-
-        do
-        {
-            printf("Item que deseja alterar:\n[1] - Nome\n[2] - Preço\n[3] - Quantidade\n[4] - Sair\nOpção: ");
-            scanf("%i", &opc);
-            fflush(stdin);
-
-            switch (opc)
-            {
-            case 1:
-                printf("\nDigite o novo nome: ");
-                fgets(p->nome, sizeof(p->nome), stdin);
-                p->nome[strcspn(p->nome, "\n")] = 0;
-                break;
-
-            case 2:
-                printf("\nDigite o novo preço: ");
-                scanf("%f", &p->preco);
-                fflush(stdin);
-                break;
-
-            case 3:
-                printf("\nDigite a nova quantidade: ");
-                scanf("%i", &p->quantidade);
-                fflush(stdin);
-                break;
-
-            default:
-                break;
-            }
-        } while (opc != 4);
+        printf("\nCódigo: %i\nNome do produto: %s\nQuantidade: %i\nPreço: %.2f\nTotal: %.2f\n\n\n", (p_venda + achou)->idVenda, (p_venda + achou)->produto, (p_venda + achou)->qtdProdutos, (p_venda + achou)->preco, ((p_venda + achou)->qtdProdutos * (p_venda + achou)->preco));
     }
 }
 
-void mostra_estoque(produto *p_produto, int qtd_produtos)
+void mostra_vendas(venda *p_venda, int qtd)
 {
-    for (produto *p = p_produto; p < p_produto + qtd_produtos; p++)
+    int i;
+
+    for (i = 0; i < qtd; i++, p_venda++)
     {
-        if (strcmp(p->nome, "-") != 0) // Ignora produtos removidos
+        if (p_venda->produto != "-")
         {
-            printf("\nCódigo: %i\nProduto: %s\nPreço: %.2f\nQuantidade: %i\n", p->codigo, p->nome, p->preco, p->quantidade);
+            printf("\nCódigo: %i\nNome do produto: %s\nQuantidade: %i\nPreço: %.2f\nTotal: %.2f\n\n\n", p_venda->idVenda, p_venda->produto, p_venda->qtdProdutos, p_venda->preco, (p_venda->qtdProdutos * p_venda->preco));
         }
     }
 }
 
-void remove_produto(produto *p_produto, int *qtd_produtos)
+void remover_produto(venda *p_venda, int qtd)
 {
-    produto *p = busca_produto(p_produto, *qtd_produtos);
+    int achou = busca_produto(p_venda, qtd);
 
-    if (p == NULL)
+    if (achou == -1)
     {
-        printf("\nProduto não encontrado...");
+        printf("\nProduto Inválido");
     }
     else
     {
-        strcpy(p->nome, "-");
-        p->preco = 0.00;
-        p->quantidade = 0;
-        printf("\nProduto removido com sucesso!\n");
-
-        (*qtd_produtos)--; // Reduz a quantidade de produtos cadastrados
+        (p_venda + achou)->idVenda = -1;
     }
+
+    p_venda->idVenda = busca_produto(p_venda, qtd);
+    if (p_venda->idVenda == -1)
+        printf("\nProduto Inválido...\n\n");
+    else
+        printf("\nProduto removido com sucesso! - Produto = %i\n\n", p_venda->idVenda);
+    printf("\n\n\n");
+    system("pause");
 }
