@@ -49,6 +49,7 @@ int main()
 
         printf("[1]-Cadastro de Venda\n[2] - Busca Produto\n[3] - Remover Produto\n[4] - Exibir Vendas\n[5] - Sair\n\n");
         scanf("%i", &opc);
+        fflush(stdin);
 
         switch (opc)
         {
@@ -126,13 +127,6 @@ void cadastro_venda(venda *p_venda, int qtd)
     scanf("%i", &(p_venda->preco));
     fflush(stdin);
 
-    p_venda->idVenda = busca_produto(p_venda, qtd);
-    if (p_venda->idVenda == -1)
-        printf("\nProduto Inválido...\n\n");
-    else
-        printf("\nCadastro com sucesso - Produto = %i\n\n", p_venda->idVenda);
-    printf("\n\n\n");
-    system("pause");
 }
 
 int busca_produto(venda *p_venda, int qtd)
