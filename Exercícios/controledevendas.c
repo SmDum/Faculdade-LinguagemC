@@ -56,7 +56,7 @@ int main()
             pos = busca_produto(produto, qtd);
             if (pos == -1)
             {
-                aloca(&ph, cont + 1);
+                aloca(&produto, cont + 1);
                 pos = cont;
                 cont++;
             }
@@ -70,7 +70,7 @@ int main()
             system("pause");
             system("cls");
             break;
-        
+
         case 3:
             remover_produto(produto, qtd);
             system("pause");
@@ -106,13 +106,13 @@ void cadastro(venda *p_venda, int qtd)
     for (i = 0; i < qtd; i++, p_venda++)
     {
         p_venda->idVenda = i;
-        p_venda->produtos = "-";
+        p_venda->produto = "-";
         p_venda->qtdProdutos = 0;
         p_venda->total = 0.0;
     }
 }
 
-void cadastro_venda(venda *p_venda)
+void cadastro_venda(venda *p_venda, int qtd)
 {
     printf("\nNome do Produto: ");
     gets(p_venda->produto);
@@ -161,7 +161,7 @@ void exibir_venda(venda *p_venda, int qtd)
     }
     else
     {
-        printf("\nCódigo: %i\nNome do produto: %s\nQuantidade: %i\nPreço: %.2f\nTotal: %.2f\n\n\n", p_venda + achou->idVenda, p_venda + achou->produto, p_venda + achou->qtdProdutos, p_venda + achou->preco, (p_venda + achou->qtdProdutos * p_venda + achou->qtdProdutos));
+        printf("\nCódigo: %i\nNome do produto: %s\nQuantidade: %i\nPreço: %.2f\nTotal: %.2f\n\n\n", (p_venda + achou)->idVenda, (p_venda + achou)->produto, (p_venda + achou)->qtdProdutos, (p_venda + achou)->preco, ((p_venda + achou)->qtdProdutos * (p_venda + achou)->qtdProdutos));
     }
 }
 
@@ -188,7 +188,7 @@ void remover_produto(venda *p_venda, int qtd)
     }
     else
     {
-        p_venda + achou->idVenda = -1;
+        (p_venda + achou)->idVenda = -1;
     }
 
     p_venda->idVenda = busca_produto(p_venda, qtd);
