@@ -24,7 +24,7 @@ void aloca_cliente(cliente **p_cliente, int qtd);
 void cadastra_carro(carro *p_carro, int qtd);
 void cadastra_cliente(cliente *p_cliente, carro *p_carro);
 
-int busca_carro(carro *p_carro, char tipo_car);
+int busca_carro(carro *p_carro, char tipo_car, int qtd);
 int busca_CPF(cliente *p_cliente, int qtd, char *aux);
 
 void devolucao(cliente *p_cliente, int qtd_cli, carro *p_carro, int qtd_car);
@@ -119,7 +119,7 @@ void cadastra_cliente(cliente *p_cliente, carro *p_carro)
 
     numcar = busca_carro(p_carro, tipcar);
 
-    if(numcar==-1)
+    if (numcar == -1)
     {
         printf("\nNão há carros dessa categoria...\n\n\n");
     }
@@ -140,24 +140,86 @@ void cadastra_cliente(cliente *p_cliente, carro *p_carro)
         fflush(stdin);
 
         printf("\nCadastro feito com sucesso\nCarro: %i\n\n\n", pcli->num_reg);
-
     }
-
 }
 
-int busca_carro(carro *p_carro, char tipo_car)
+int busca_carro(carro *p_carro, char tipo_car, int qtd)
 {
-    
+    int i, id_carro;
+
+    printf("\nDigite o ID do Veículo: ");
+    scanf("%i", &id_carro);
+
+    for (i = 0; i < qtd, i++, p_carro++)
+    {
+        if(id_carro==p_carro->reg_carro)
+        {
+            return i;
+        }
+    }
+    return -1;
 }
 
 int busca_CPF(cliente *p_cliente, int qtd, char *aux)
 {
+    int i;
+
+    for(i = 0; i<qtd; i++, p_cliente++)
+    {
+        if(strcmp(p_cliente->CPF, aux)==0)
+        {
+            return i;
+        }
+    } 
+    return -1;
 }
 
 void devolucao(cliente *p_cliente, int qtd_cli, carro *p_carro, int qtd_car)
 {
+    char aux_CPF[13], tip;
+    int pos, reg, tempo;
+
+    pos = busca_CPF(p_cliente, qtd_cli, aux_CPF);
+
+    if(pos==-1)
+    {
+        printf("\nCPF Inválido...\n\n\n");
+    } 
+    else
+    {
+        reg = (p_cliente+pos)->num_reg;
+        tip = (p_carro+reg)->tipo;
+        (p_carro + reg)->status = 'L';
+        tempo = (p_cliente+pos)->dias;
+
+        printf("\nNome: %s\nCarro: %i\nTipo de carro: %c\nDias: %i\n", (pcli + pos)->nome, reg, tip, tempo);
+
+        switch(tip)
+        {
+            case 'P':
+                printf("Valor a ser pago: R$%.2f\n", tempo * 150.00);
+                break;
+
+            case 'M':
+                printf("Valor a ser pago: R$%.2f\n", tempo * 200.00);
+                break;
+
+            case 'G':
+                printf("Valor a ser pago: R$%.2f\n", tempo * 250.00);
+                break;   
+        }
+    }
+
 }
 
 void mostra_carro(carro *p_carro, int qtd)
 {
+    int i;
+
+    for(i=0; i<qtd; i++, p_carro++)
+    {
+        printf("\nRegistro Carro: %i\nTipo: %c\nStatus: %c\n\n", pcar->reg_carro, pcar->tipo, pcar->status);
+
+        printf("\n\n\n");
+    }
 }
