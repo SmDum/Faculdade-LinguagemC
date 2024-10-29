@@ -1,25 +1,3 @@
-/*
-Sistema de Reserva de Passagens Aéreas
-Desenvolva um programa para uma agência de viagens que faz reservas de voos. O avião possui 100 assentos, sendo 10 na primeira classe e 90 na classe econômica.
-•	[1] Nova Reserva - Cadastrar passageiros, pedindo o nome, classe (primeira ou econômica) e número do voo. O programa deve alocar dinamicamente uma estrutura para armazenar os dados e atribuir assento disponível. Para a classe econômica, priorizar assentos próximos.
-•	[2] Cancelamento de Reserva - Permitir o cancelamento de uma reserva, liberando o assento correspondente.
-•	[3] Relatório de Voos - Apresentar um relatório completo dos passageiros por voo, incluindo classe e assento.
-c
-Copiar código
-struct passageiro {
-    char CPF[13];
-    char nome[80];
-    char classe; // 'P' Primeira, 'E' Econômica
-    int assento;
-};
-
-struct voo {
-    int num_poltrona;
-    char status;
-    char tipo;
-};
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
@@ -46,13 +24,13 @@ void aloca_voo(voo **p_voo, int qtd_assentos);
 void cadastra_passageiro(passageiro *p_passageiro, voo *p_voo, int qtd_assentos);
 void cadastra_voo(voo *p_voo, int qtd_assentos);
 
-int busca_passageiro(passageiro *p_passageiro, int qtd_passageiro);
-int busca_assento(voo *p_voo, int qtd_assentos);
+int busca_passageiro(passageiro *p_passageiro, int qtd_passageiro, char *aux_CPF);
+int busca_assento(voo *p_voo, int qtd_assentos, char tipo_assento);
 
-void cancelamento(passageiro *p_passageiro, voo *p_voo, int qtd_assentos);
+void cancelamento(passageiro *p_passageiro, int qtd_passageiros, voo *p_voo, int qtd_assentos);
 
-void mostra_poltronas(voo p_voo, int qtd_assentos);
-void mostra_passageiros(passageiro *p_passageiro, voo *p_voo, int qtd_assentos);
+void mostra_poltronas(voo *p_voo, int qtd_assentos);
+void mostra_passageiros(passageiro *p_passageiro, int qtd_assentos);
 
 int main()
 {
@@ -67,7 +45,7 @@ int main()
 
     do
     {
-        printf("[1] - Cadastro\n[2] - Cancelamento\n[3] - Mostrar Assentos\n[4] - Mostrar Passageiros\n[5] - Fim");
+        printf("[1] - Cadastro\n[2] - Cancelamento\n[3] - Mostrar Assentos\n[4] - Mostrar Passageiros\n[5] - Fim\nOpção: ");
         scanf("%i", &opc);
 
         switch (opc)
@@ -81,7 +59,7 @@ int main()
             break;
 
         case 2:
-            cancelamento(p_passageiro + cont, p_voo, qtd_assentos);
+            cancelamento(p_passageiro, cont, p_voo, qtd_assentos);
             system("pause");
             system("cls");
             break;
@@ -93,7 +71,7 @@ int main()
             break;
 
         case 4:
-            mostra_passageiros(p_passageiro, p_voo, qtd_assentos);
+            mostra_passageiros(p_passageiro, cont);
             system("pause");
             system("cls");
             break;
@@ -103,8 +81,8 @@ int main()
         }
     } while (opc != 5);
 
-    free(*p_passageiro);
-    free(*p_voo);
+    free(p_passageiro);
+    free(p_voo);
 
     return 0;
 }
@@ -131,10 +109,12 @@ void cadastra_passageiro(passageiro *p_passageiro, voo *p_voo, int qtd_assentos)
 {
     char tip_assento;
 
+    printf("\n\n\n");
     printf("Tipo de Assento\n(E - Econômica)\n(P - Primeira Classe)\nOpção: ");
     scanf(" %c", &tip_assento);
     fflush(stdin);
-    toupper(tip_assento);
+
+    tip_assento = toupper(tip_assento);
 
     int num_assento = busca_assento(p_voo, qtd_assentos, tip_assento);
 
@@ -144,17 +124,17 @@ void cadastra_passageiro(passageiro *p_passageiro, voo *p_voo, int qtd_assentos)
     }
     else
     {
-        printf("CPF: ");
-        gets(p_passageiro->CPF);
+        printf("\nCPF: ");
+        fgets(p_passageiro->CPF, 13, stdin);
         fflush(stdin);
 
-        printf("Nome: ");
-        gets(p_passageiro->nome);
+        printf("\nNome: ");
+        fgets(p_passageiro->nome, 80, stdin);
         fflush(stdin);
 
         p_passageiro->assento = num_assento;
-
-        p_voo->status = 'O';
+        p_passageiro->classe = tip_assento;
+        (p_voo + num_assento - 1)->status = 'O';
 
         printf("\nCadastro Realizado com Sucesso! Número do assento: %i\n\n\n", p_passageiro->assento);
     }
@@ -162,11 +142,11 @@ void cadastra_passageiro(passageiro *p_passageiro, voo *p_voo, int qtd_assentos)
 
 void cadastra_voo(voo *p_voo, int qtd_assentos)
 {
-    int i;
-
-    for (i = 1; i <= qtd_assentos; i++, qtd_assentos++)
+    for (int i = 1; i <= qtd_assentos; i++, p_voo++)
     {
-        if (p_voo->num_poltrona <= 10)
+        p_voo->num_poltrona = i;
+
+        if (i <= 10)
         {
             p_voo->tipo = 'P';
         }
@@ -174,19 +154,16 @@ void cadastra_voo(voo *p_voo, int qtd_assentos)
         {
             p_voo->tipo = 'E';
         }
-        
-        p_voo->status='L';
-        p_voo->num_poltrona=i;
+
+        p_voo->status = 'L';
     }
 }
 
-int busca_passageiro(passageiro *p_passageiro, int qtd_passageiro, char aux_CPF)
+int busca_passageiro(passageiro *p_passageiro, int qtd_passageiro, char *aux_CPF)
 {
-    int i;
-
-    for(i=1;i<=qtd_passageiro;i++, p_passageiro++)
+    for (int i = 1; i <= qtd_passageiro; i++, p_passageiro++)
     {
-        if(aux_CPF == p_passageiro->CPF)
+        if (strcmp(aux_CPF, p_passageiro->CPF) == 0)
         {
             return i;
         }
@@ -196,40 +173,52 @@ int busca_passageiro(passageiro *p_passageiro, int qtd_passageiro, char aux_CPF)
 
 int busca_assento(voo *p_voo, int qtd_assentos, char tipo_assento)
 {
-    int i;
-
-    for(i=1; i<=qtd_assentos; i++, p_voo++)
+    for (int i = 1; i <= qtd_assentos; i++, p_voo++)
     {
-        if(tipo_assento==p_voo->tipo)
+        if (tipo_assento == p_voo->tipo && p_voo->status == 'L')
         {
             return i;
         }
     }
     return -1;
-
 }
 
-void mostra_poltronas(voo p_voo, int qtd_assentos)
+void mostra_poltronas(voo *p_voo, int qtd_assentos)
 {
-    int i;
-
-    for(i=1; i<=qtd_assentos;i++, p_voo++)
+    for (int i = 1; i <= qtd_assentos; i++, p_voo++)
     {
         printf("\nID: %i\nStatus: %c\nTipo: %c\n\n", p_voo->num_poltrona, p_voo->status, p_voo->tipo);
     }
 }
 
-void mostra_passageiros(passageiro *p_passageiro, voo *p_voo, int qtd_assentos)
+void mostra_passageiros(passageiro *p_passageiro, int qtd_passageiros)
 {
-    int i;
-
-    for(i=1; i<=qtd_assentos;i++, p_voo++)
+    for (int i = 1; i <= qtd_passageiros; i++, p_passageiro++)
     {
-        printf("\nCPF: %i\nNome: %c\nClasse: %c\nAssento: %i\n\n", p_passageiro->CPF, p_passageiro->nome, p_passageiro->classe, p_passageiro->assento);
+        printf("\nCPF: %s\nNome: %s\nClasse: %c\n\nAssento: %i\n\n", p_passageiro->CPF, p_passageiro->nome, p_passageiro->classe, p_passageiro->assento);
     }
 }
 
-void cancelamento(passageiro *p_passageiro, voo p_voo, int qtd_assentos)
+void cancelamento(passageiro *p_passageiro, int qtd_passageiros, voo *p_voo, int qtd_assentos)
 {
+    char aux_CPF[13];
 
+    fflush(stdin);
+    printf("\nDigite o CPF a ser cancelado: ");
+    fgets(aux_CPF, 13, stdin);
+    fflush(stdin);
+
+    int pos = busca_passageiro(p_passageiro, qtd_passageiros, aux_CPF);
+
+    if (pos == -1)
+    {
+        printf("\nCPF Inválido...");
+    }
+    else
+    {
+        int assento = (p_passageiro + pos - 1)->assento;
+        printf("\nCancelamento do passageiro %s do assento %i Confirmado!", (p_passageiro + pos - 1)->nome, assento);
+        (p_voo + assento - 1)->status = 'L';
+        strcpy((p_passageiro + pos - 1)->CPF, "-1");
+    }
 }
