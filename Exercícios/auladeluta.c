@@ -124,6 +124,9 @@ void cadastra_aluno(aluno *p_aluno, luta *p_luta, int qtd_luta)
         fgets(p_aluno->CPF, 13, stdin);
         fflush(stdin);
 
+        printf("\nTurno\n[M] - Manhã\n[T] - Tarde\n[N] - Noite\nOpção: ");
+        scanf("%c", p_luta->turno);
+
         p_aluno->id_aula = pos;
 
         printf("\nCadastro Realizado com Sucesso!");
