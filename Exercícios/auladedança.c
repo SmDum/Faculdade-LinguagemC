@@ -167,7 +167,7 @@ void cadastra_aluno(aluno *a, dance *d)
 	}
 	else
 	{
-		printf("\nCadastro do aluno bem efetuado. Seja bem-vindo(a)!\nSua aula eh: %d\nO valor eh: R$%.2f\n\n\n", a->numaula, (d + (a->numaula) - 1)->valor);
+		printf("\nCadastro do aluno bem efetuado. Seja bem-vindo(a)!\nSua aula eh: %d\nO valor eh: R$%.2f\n\n\n", a->numaula,(d + (a->numaula) - 1)->valor);
 	}
 
 	system("pause");
