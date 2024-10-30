@@ -8,8 +8,8 @@
 
 typedef struct dance
 {
-    int regaula;     // registro da aula
-    int qaluno;      // registra a quantidade de alunos matriculados
+    int reg_aula;     // registro da aula
+    int qtd_aluno;      // registra a quantidade de alunos matriculados
     char modalidade; //[B]allet, [S]apatadeado
     char turno;      //[M]anha | [T]arde | [N]oite
     float valor;     // valor da aula
@@ -19,7 +19,7 @@ typedef struct aluno
 {
     char CPF[13];  // CPF do aluno
     char nome[80]; // nome do aluno
-    int numaula;   // numero do registro da aula
+    int num_aula;   // numero do registro da aula
 } aluno;
 
 void aloca_aluno(aluno **p_aluno, int qtd_aluno);
@@ -97,7 +97,38 @@ void aloca_dance(dance **p_dance, int qtd_dance)
 
 void cadastra_aluno(aluno *p_aluno, int qtd_aluno, dance *p_dance, int qtd_dance)
 {
+    char aux_modalidade, aux_turno;
+
+    printf("\nNome: ");
+    fgets(p_aluno->nome, 80, stdin);
+    fflush(stdin);
+
+    printf("\nCPF: ");
+    fgets(p_aluno->CPF, 13, stdin);
+    fflush(stdin);
+
+    printf("\nModalidade\n[B] - Ballet\n[S] - Sapateado\nOpção: ");
+    scanf("%c", &aux_modalidade);
+    fflush(stdin);
+    aux_modalidade = toupper(aux_modalidade);
     
+
+    printf("\nTurno\n[M] - Manhã\n[T] - Tarde\n[N] - Noite\nOpção: ");
+    scanf("%c", &aux_turno);
+    fflush(stdin);
+    aux_turno = toupper(aux_turno);
+
+    p_aluno->num_aula = busca_dance(p_dance, qtd_dance, aux_turno, aux_modalidade);
+
+    if(p_aluno->num_aula == -1)
+    {
+        printf("\nTipo de Aula não Encontrada...");
+    }
+    else
+    {
+        printf("\nCadastro Realizado com Sucesso! Seja bem vindo!\n Sua aula é: %i.\nValor: %.2f\n\n\n", p_aluno->num_aula+1, p_dance+(p_aluno->num_aula)->valor);
+    }
+
 }
 
 void cadastra_dance(aluno *p_aluno, dance *p_dance, int qtd_dance)
