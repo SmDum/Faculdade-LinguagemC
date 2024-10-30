@@ -8,7 +8,7 @@ typedef struct luta
 {
     int reg_aula;    // registro da aula
     int qtd_aluno;   // registra a quantidade de alunos matriculados
-    char modalidade; //[B]allet, [S]apatadeado
+    char modalidade; //[B]oxe, [J]udô
     char turno;      //[M]anha | [T]arde | [N]oite
     float valor;     // valor da aula
 } luta;
