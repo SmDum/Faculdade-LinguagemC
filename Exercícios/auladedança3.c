@@ -52,7 +52,7 @@ int main()
         {
         case 1:
             mostra_dance(p_dance, qtd);
-            aloca_aluno(&p_aluno, cont+1);
+            aloca_aluno(&p_aluno, cont + 1);
             cadastra_aluno(p_aluno + cont, p_dance);
             cont++;
             system("pause");
@@ -120,7 +120,7 @@ void cadastra_aluno(aluno *p_aluno, dance *p_dance)
     }
     else
     {
-        printf("\nCadastro realizado com sucesso!\nSua aula é %i\nValor: %.2f", p_aluno->num_aula, ((p_dance + p_aluno->num_aula-1)->valor));
+        printf("\nCadastro realizado com sucesso!\nSua aula é %i\nValor: %.2f", p_aluno->num_aula, ((p_dance + p_aluno->num_aula - 1)->valor));
     }
 }
 
