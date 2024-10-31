@@ -8,8 +8,8 @@
 
 typedef struct dance
 {
-    int reg_aula;     // registro da aula
-    int qtd_aluno;      // registra a quantidade de alunos matriculados
+    int reg_aula;    // registro da aula
+    int qtd_aluno;   // registra a quantidade de alunos matriculados
     char modalidade; //[B]allet, [S]apatadeado
     char turno;      //[M]anha | [T]arde | [N]oite
     float valor;     // valor da aula
@@ -19,14 +19,14 @@ typedef struct aluno
 {
     char CPF[13];  // CPF do aluno
     char nome[80]; // nome do aluno
-    int num_aula;   // numero do registro da aula
+    int num_aula;  // numero do registro da aula
 } aluno;
 
 void aloca_aluno(aluno **p_aluno, int qtd_aluno);
 void aloca_dance(dance **p_dance, int qtd_dance);
 
 void cadastra_aluno(aluno *p_aluno, int qtd_aluno, dance *p_dance, int qtd_dance);
-void cadastra_dance(aluno *p_aluno, dance *p_dance, int qtd_dance);
+void cadastra_dance(dance *p_dance, int qtd_dance);
 
 int busca_dance(dance p_dance, int qtd_dance, char aux_turno, char aux_modalidade);
 
@@ -111,7 +111,6 @@ void cadastra_aluno(aluno *p_aluno, int qtd_aluno, dance *p_dance, int qtd_dance
     scanf("%c", &aux_modalidade);
     fflush(stdin);
     aux_modalidade = toupper(aux_modalidade);
-    
 
     printf("\nTurno\n[M] - Manhã\n[T] - Tarde\n[N] - Noite\nOpção: ");
     scanf("%c", &aux_turno);
@@ -120,29 +119,108 @@ void cadastra_aluno(aluno *p_aluno, int qtd_aluno, dance *p_dance, int qtd_dance
 
     p_aluno->num_aula = busca_dance(p_dance, qtd_dance, aux_turno, aux_modalidade);
 
-    if(p_aluno->num_aula == -1)
+    if (p_aluno->num_aula == -1)
     {
         printf("\nTipo de Aula não Encontrada...");
     }
     else
     {
-        printf("\nCadastro Realizado com Sucesso! Seja bem vindo!\n Sua aula é: %i.\nValor: %.2f\n\n\n", p_aluno->num_aula+1, p_dance+(p_aluno->num_aula)->valor);
+        printf("\nCadastro Realizado com Sucesso! Seja bem vindo!\n Sua aula é: %i.\nValor: %.2f\n\n\n", p_aluno->num_aula + 1, p_dance + (p_aluno->num_aula)->valor);
     }
-
 }
 
-void cadastra_dance(aluno *p_aluno, dance *p_dance, int qtd_dance)
+void cadastra_dance(dance *p_dance, int qtd_dance)
 {
+    int i;
+
+    for (i = 0; i < qtd_dance; i++)
+    {
+        p_dance->qtd_aluno = 0;
+        p_dance->reg_aula = i + 1;
+
+        switch (i)
+        {
+        case 0:
+            p_dance->modalidade = 'B';
+            p_dance->turno = 'M';
+            break;
+
+        case 1:
+            p_dance->modalidade = 'B';
+            p_dance->turno = 'T';
+            break;
+
+        case 2:
+            p_dance->modalidade = 'B';
+            p_dance->turno = 'N';
+            break;
+
+        case 3:
+            p_dance->modalidade = 'S';
+            p_dance->turno = 'M';
+            break;
+
+        case 4:
+            p_dance->modalidade = 'S';
+            p_dance->turno = 'T';
+            break;
+
+        case 5:
+            p_dance->modalidade = 'S';
+            p_dance->turno = 'N';
+            break;
+        }
+
+        switch (p_dance->turno)
+        {
+        case 'M':
+            p_dance->valor = 300;
+            break;
+
+        case 'T':
+            p_dance->valor = 250;
+            break;
+
+        case 'N':
+            p_dance->valor = 350;
+            break;
+        }
+    }
 }
 
 int busca_dance(dance p_dance, int qtd_dance, char aux_turno, char aux_modalidade)
 {
+    int i;
+
+    for (i = 0; i < qtd_dance; i++, p_dance++)
+    {
+        if (p_dance->modalidade == aux_modalidade && p_dance->turno == aux_turno)
+        {
+            p_dance->qtd_aluno++;
+            return i;
+        }
+    }
+    return -1;
 }
 
 void mostra_aluno(aluno *p_aluno, int qtd_aluno)
 {
+    int i;
+
+    for (i = 0; i < qtd_aluno; i++, p_aluno++)
+    {
+        printf("\nNome: %s\nCPF: %s\nNumero de Aula: %i", p_aluno->nome, p_aluno->CPF, p_aluno->num_aula);
+        printf("\n\n\n");
+    }
 }
 
 void mostra_dance(dance *p_dance, int qtd_dance)
 {
+    int i;
+
+    for (i = 0; i < qtd_dance; i++, qtd_dance++)
+    {
+        printf("\nRegistro da Aula: %i\nModalidade: %c\nTurno: %c\nQtd de Alunos: %i\nValor: %.2f", p_dance->reg_aula, p_dance->modalidade, p_dance->turno, p_dance->qtd_aluno, p_dance->valor);
+        printf("\n\n\n");
+    }
 }
