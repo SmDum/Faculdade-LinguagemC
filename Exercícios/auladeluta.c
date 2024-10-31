@@ -22,13 +22,21 @@ typedef struct aluno
     int num_aula;  // numero do registro da aula
 } aluno;
 
+// Funções Aloca ----------------------------------------------
+
 void aloca_aluno(aluno **p_aluno, int qtd_aluno);
 void aloca_dance(dance **p_dance, int qtd_dance);
+
+// Funções Cadastra ----------------------------------------------
 
 void cadastra_aluno(aluno *p_aluno, int qtd_aluno, dance *p_dance, int qtd_dance);
 void cadastra_dance(dance *p_dance, int qtd_dance);
 
+// Função Busca ----------------------------------------------
+
 int busca_dance(dance *p_dance, int qtd_dance, char aux_turno, char aux_modalidade);
+
+// Funções Mostra ----------------------------------------------
 
 void mostra_aluno(aluno *p_aluno, int qtd_aluno);
 void mostra_dance(dance *p_dance, int qtd_dance);
