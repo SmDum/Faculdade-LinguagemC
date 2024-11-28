@@ -63,16 +63,19 @@ nOpcao:");
     } while (op != 5);
     system("pause");
 } // main
+
 void aloca_quarto(quarto **pq, int qq)
 {
     if (((*pq = (quarto *)realloc(*pq, qq * sizeof(quarto))) == NULL))
         exit(1);
 } // aloca_quarto
+
 void aloca_hospede(hospede **ph, int qh)
 {
     if (((*ph = (hospede *)realloc(*ph, qh * sizeof(hospede))) == NULL))
         exit(1);
 } // aloca_hospede
+
 int verifica_hospede()
 {
     FILE *fh = NULL;
@@ -84,6 +87,7 @@ int verifica_hospede()
     fclose(fh);
     return q;
 } // verifica_hospede
+
 void cadastro_quarto(quarto *pq, int qq)
 {
     int i;
@@ -98,6 +102,40 @@ void cadastro_quarto(quarto *pq, int qq)
         grava_quarto(pq);
     } // for
 } // cadastra_quarto
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void cadastro_hospede(hospede *ph, quarto *pq, int qq)
 {
     int qhosp, pos;
@@ -113,10 +151,12 @@ void cadastro_hospede(hospede *ph, quarto *pq, int qq)
         scanf("%i", &(ph->acompanhante));
         fflush(stdin);
     } while (ph->acompanhante < 0 || ph->acompanhante > 3);
+
     if (ph->acompanhante == 0)
         ph->quarto = busca_quarto(pq, qq, 'S');
     else
         ph->quarto = busca_quarto(pq, qq, 'F');
+        
     printf("\nNum quarto:%i", ph->quarto);
     if (ph->quarto == -1)
         printf("\nHotel Lotado");
