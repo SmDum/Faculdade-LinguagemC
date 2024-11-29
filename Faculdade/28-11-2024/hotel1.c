@@ -201,11 +201,11 @@ void cadastro_hospede(hospede *ph, quarto *pq, int qq)
 
         if (pos == -1) // Se não há hospede vago
         {
-            grava_hospede(ph, 'ab', 1); // Grava no Final
+            grava_hospede(ph, "ab", 1); // Grava no Final
         }
         else // Senão
         {
-            grava_hospede(ph, 'rb+', pos); // Reescreve no hóspede vago
+            grava_hospede(ph, "rb+", pos); // Reescreve no hóspede vago
         }
     }
 
@@ -230,7 +230,7 @@ void grava_hospede(hospede *ph, char *aux, int pos)
 {
     FILE *fh = NULL;
 
-    if ((fh = fopen("quartos.bin", "ab")) == NULL)
+    if ((fh = fopen("hospede.bin", "ab")) == NULL)
     {
         printf("\nErro\n\n");
     }

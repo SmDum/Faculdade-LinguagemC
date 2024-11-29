@@ -20,17 +20,24 @@ typedef struct hospede
 
 void aloca_quarto(quarto **q, int qq);
 void aloca_hospede(hospede **h, int qh);
+
 int verifica_quarto();
 int verifica_hospede();
+
 void cadastro_quarto(quarto *q, int qq);
 void cadastro_hospede(hospede *h, quarto *q, int qq);
+
 void grava_quarto(quarto *q);
 void grava_hospede(hospede *h, char *aux, int pos);
+
 void atualiza_quarto(quarto *q, int n_quarto);
+
 int busca_quarto(quarto *q, int qq, char cat);
 int busca_hospede(hospede *h, int n_quarto);
 int busca_vago(hospede *h, int qh);
+
 void check_out(hospede *h, quarto *q);
+
 void mostra_quarto(quarto *q);
 void mostra_hospede(hospede *h);
 
