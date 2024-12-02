@@ -215,10 +215,32 @@ void cadastra_hospede(hospede *ph, quarto *pq, int qq)
 
 void grava_quarto(quarto *pq)
 {
+    FILE *fq; 
+
+    if((fq = fopen("quartos.bin", "ab")) == NULL)
+    {
+        printf("\nErro\n\n");
+    }
+    else
+    {
+        fwrite(pq, sizeof(quarto), 1, fq);
+    }
+    fclose(fq);
 }
 
 void grava_hospede(hospede *ph, char *aux, int pos)
 {
+    FILE *fh; 
+
+    if((fh = fopen("hospedes.bin", "ab")) == NULL)
+    {
+        printf("\nErro\n\n");
+    }
+    else
+    {
+        fwrite(ph, sizeof(quarto), 1, fh);
+    }
+    fclose(fh);
 }
 
 int busca_quarto(quarto *pq, int qq, char cat)
