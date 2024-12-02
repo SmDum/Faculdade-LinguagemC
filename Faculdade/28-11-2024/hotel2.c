@@ -158,9 +158,59 @@ void cadastra_quarto(quarto *pq, int qq)
     }
 }
 
-void cadastra_hospede(hospede *ph, quarto *pq, int qh)
+void cadastra_hospede(hospede *ph, quarto *pq, int qq)
 {
-    
+    int qhosp, pos;
+    FILE *fh = NULL;
+
+    qhosp = verifica_hospede();
+    pos = busca_vago(ph, qhosp);
+
+    printf("\nNome: ");
+    gets(ph->nome);
+    fflush(stdin);
+
+    do
+    {
+        printf("\nAcompanhantes: ");
+        scanf("%i", &(ph->acompanhante));
+        fflush(stdin);
+    } while (ph->acompanhante < 0 && ph->acompanhante > 3);
+
+    if (ph->acompanhante == 0)
+    {
+        ph->acompanhante = 'S';
+    }
+
+    else
+    {
+        ph->acompanhante = 'F';
+    }
+
+    printf("\nDias: ");
+    scanf("%i", &(ph->dias));
+    fflush(stdin);
+
+    ph->quarto = busca_quarto(pq, qq, ph->categoria);
+
+    if (ph->quarto == -1)
+    {
+        printf("\nNão há quartos disponíveis nessa categoria...");
+    }
+    else
+    {
+        printf("\nCadastro realizado com sucesso!\nSeu quarto é %i", ph->quarto);
+
+        if(pos == -1)
+        {
+            grava_hospede(ph, "ab", 1);
+        }
+        else
+        {
+            grava_hospede(ph, "rb+", pos);
+        }
+    }
+    system("pause");
 }
 
 void grava_quarto(quarto *pq)
@@ -181,6 +231,29 @@ int busca_hospede(hospede *ph, int n_quarto)
 
 int busca_vago(hospede *ph, int qh)
 {
+    int i;
+    FILE *fh = NULL;
+
+    if ((fh = fopen("hospedes.bin", "rb")) == NULL)
+    {
+        exit(1);
+    }
+    else
+    {
+        for (i = 0; i < qh; i++)
+        {
+            fseek(fh, i * sizeof(hospede), 0);
+            fread(ph, sizeof(hospede), 1, fh);
+
+            if (ph->quarto == -1)
+            {
+                fclose(fh);
+                return i;
+            }
+        }
+        fclose(fh);
+    }
+    return (-1);
 }
 
 void check_out(quarto *pq, hospede *ph)
