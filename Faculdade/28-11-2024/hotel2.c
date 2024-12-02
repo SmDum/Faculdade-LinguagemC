@@ -160,6 +160,7 @@ void cadastra_quarto(quarto *pq, int qq)
 
 void cadastra_hospede(hospede *ph, quarto *pq, int qh)
 {
+    
 }
 
 void grava_quarto(quarto *pq)
