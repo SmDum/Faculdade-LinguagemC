@@ -245,6 +245,32 @@ void grava_hospede(hospede *ph, char *aux, int pos)
 
 int busca_quarto(quarto *pq, int qq, char cat)
 {
+    int i, pos = -1;
+    FILE *fq = NULL;
+
+    if ((fq = fopen("hospedes.bin", "rb+")) == NULL)
+    {
+        printf("\nErro\n\n");
+    }
+    else
+    {
+        for (i = 0; i < qq; i++)
+        {
+            fseek(fq, i * sizeof(hospede), 0);
+            fread(pq, sizeof(hospede), 1, fq);
+
+            if (pq->categoria == cat && pq->status == 'L')
+            {
+                pq->status = 'O';
+                fseek(fq, i * sizeof(hospede), 0);
+                fwrite(pq, sizeof(quarto), 1, fq);
+                pos = pq->num;
+                i = qq;
+            }
+        }
+    }
+    fclose(fq);
+    return pos;
 }
 
 int busca_hospede(hospede *ph, int n_quarto)
