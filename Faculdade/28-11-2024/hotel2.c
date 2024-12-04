@@ -399,7 +399,7 @@ void mostra_quarto(quarto *pq)
         for (i = 0; i < qq; i++)
         {
             fseek(fq, i * sizeof(quarto), 0);
-            fread(pq, sizeof(quarto), 1, pq);
+            fread(pq, sizeof(quarto), 1, fq);
             printf("\nQuarto: %i\nCategoria: %c\nStatus: %c\n\n", pq->num, pq->categoria, pq->status);
         } // for
         fclose(fq);
@@ -422,7 +422,7 @@ void mostra_hospede(hospede *ph)
         for (i = 0; i < qh; i++)
         {
             fseek(fh, i * sizeof(hospede), 0);
-            fread(ph, sizeof(hospede), 1, ph);
+            fread(ph, sizeof(hospede), 1, fh);
             printf("\nQuarto: %i\nNome: %s\nAcompanhantes: %i\nCategoria: %c\nDias: %i\n\n", ph->quarto, ph->nome, ph->acompanhante, ph->categoria, ph->dias);
         } // for
         fclose(fh);
