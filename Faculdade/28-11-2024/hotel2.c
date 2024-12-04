@@ -61,6 +61,7 @@ int main()
 
     do
     {
+        system("cls");
         printf("\n[1] - Check-In\n[2] - Check-Out\n[3] - Mostrar Quartos\n[4] - Mostrar Hóspedes\n[5] - Fim\nOpção: ");
         scanf("%i", &op);
         fflush(stdin);
@@ -88,6 +89,8 @@ int main()
                 break;
         }
     } while (op != 5);
+
+    return 0;
 }
 
 void aloca_quarto(quarto **pq, int qq)
@@ -138,7 +141,7 @@ int verifica_hospede()
         fseek(fh, 0, 2);
         qtd = ftell(fh) / sizeof(hospede);
         fclose(fh);
-        return (qtd);
+        return qtd;
     }
 }
 
@@ -166,7 +169,6 @@ void cadastra_quarto(quarto *pq, int qq)
 void cadastra_hospede(hospede *ph, quarto *pq, int qq)
 {
     int qhosp, pos;
-    FILE *fh = NULL;
 
     qhosp = verifica_hospede();
     pos = busca_vago(ph, qhosp);
@@ -336,7 +338,7 @@ int busca_vago(hospede *ph, int qh)
 
     if ((fh = fopen("hospedes.bin", "rb")) == NULL)
     {
-        exit(1);
+        return -1;
     }
     else
     {
