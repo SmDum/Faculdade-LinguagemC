@@ -360,4 +360,4 @@ void mostra_hospede(hospede *h)
         fclose(fh); // dentro do else por conta do rb
     } // else
     system("pause");
-} // mostra_hospede
+} // mostra_hospedemostra_hospede

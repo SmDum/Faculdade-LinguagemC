@@ -31,6 +31,8 @@ void cadastra_hospede(hospede *ph, quarto *pq, int qh);
 void grava_quarto(quarto *pq);
 void grava_hospede(hospede *ph, char *aux, int pos);
 
+void atualiza_quarto(quarto *pq, int n_quarto);
+
 int busca_quarto(quarto *pq, int qq, char cat);
 int busca_hospede(hospede *ph, int n_quarto);
 int busca_vago(hospede *ph, int qh);
@@ -59,28 +61,31 @@ int main()
 
     do
     {
+        printf("\n[1] - Check-In\n[2] - Check-Out\n[3] - Mostrar Quartos\n[4] - Mostrar Hóspedes\n[5] - Fim\nOpção: ");
+        scanf("%i", &op);
+        fflush(stdin);
+
         switch (op)
         {
-            printf("\n[1] - Check-In\n[2] - Check-Out\n[3] - Mostrar Quartos\n[4] - Mostrar Hóspedes\n[5] - Fim");
 
-        case 1:
-            cadastra_hospede(ph, pq, 15);
-            break;
+            case 1:
+                cadastra_hospede(ph, pq, 15);
+                break;
 
-        case 2:
-            check_out(pq, ph);
-            break;
+            case 2:
+                check_out(pq, ph);
+                break;
 
-        case 3:
-            mostra_quarto(pq);
-            break;
+            case 3:
+                mostra_quarto(pq);
+                break;
 
-        case 4:
-            mostra_hospede(ph);
-            break;
+            case 4:
+                mostra_hospede(ph);
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
     } while (op != 5);
 }
@@ -95,7 +100,7 @@ void aloca_quarto(quarto **pq, int qq)
 
 void aloca_hospede(hospede **ph, int qh)
 {
-    if ((*ph = (quarto *)realloc(*ph, qh * sizeof(hospede))) == NULL)
+    if ((*ph = (hospede *)realloc(*ph, qh * sizeof(hospede))) == NULL)
     {
         exit(1);
     }
@@ -106,15 +111,15 @@ int verifica_quarto()
     FILE *fq = NULL;
     int qtd = 0;
 
-    if (fq = fopen("quartos.bin", "rb") == NULL)
+    if ((fq = fopen("quartos.bin", "rb")) == NULL)
     {
-        printf("\nArquivo Inexistente");
+        return qtd;
     }
     else
     {
         fseek(fq, 0, 2);
         qtd = ftell(fq) / sizeof(quarto);
-        fclose(qtd);
+        fclose(fq);
         return (qtd);
     }
 }
@@ -124,15 +129,15 @@ int verifica_hospede()
     FILE *fh = NULL;
     int qtd = 0;
 
-    if (fh = fopen("hospedes.bin", "rb") == NULL)
+    if ((fh = fopen("hospedes.bin", "rb")) == NULL)
     {
-        printf("\nArquivo Inexistente");
+        return qtd;
     }
     else
     {
         fseek(fh, 0, 2);
         qtd = ftell(fh) / sizeof(hospede);
-        fclose(qtd);
+        fclose(fh);
         return (qtd);
     }
 }
@@ -175,16 +180,16 @@ void cadastra_hospede(hospede *ph, quarto *pq, int qq)
         printf("\nAcompanhantes: ");
         scanf("%i", &(ph->acompanhante));
         fflush(stdin);
-    } while (ph->acompanhante < 0 && ph->acompanhante > 3);
+    } while (ph->acompanhante < 0 || ph->acompanhante > 3);
 
     if (ph->acompanhante == 0)
     {
-        ph->acompanhante = 'S';
+        ph->categoria = 'S';
     }
 
     else
     {
-        ph->acompanhante = 'F';
+        ph->categoria = 'F';
     }
 
     printf("\nDias: ");
@@ -201,7 +206,7 @@ void cadastra_hospede(hospede *ph, quarto *pq, int qq)
     {
         printf("\nCadastro realizado com sucesso!\nSeu quarto é %i", ph->quarto);
 
-        if(pos == -1)
+        if (pos == -1)
         {
             grava_hospede(ph, "ab", 1);
         }
@@ -215,9 +220,9 @@ void cadastra_hospede(hospede *ph, quarto *pq, int qq)
 
 void grava_quarto(quarto *pq)
 {
-    FILE *fq; 
+    FILE *fq;
 
-    if((fq = fopen("quartos.bin", "ab")) == NULL)
+    if ((fq = fopen("quartos.bin", "ab")) == NULL)
     {
         printf("\nErro\n\n");
     }
@@ -228,27 +233,51 @@ void grava_quarto(quarto *pq)
     fclose(fq);
 }
 
-void grava_hospede(hospede *ph, char *aux, int pos)
+void grava_hospede(hospede *h, char *aux, int pos)
 {
-    FILE *fh; 
-
-    if((fh = fopen("hospedes.bin", "ab")) == NULL)
-    {
-        printf("\nErro\n\n");
-    }
+    FILE *fh = NULL;
+    if ((fh = fopen("hospedes.bin", aux)) == NULL)
+        printf("\nArquivo inexistente\n");
     else
     {
-        fwrite(ph, sizeof(quarto), 1, fh);
-    }
-    fclose(fh);
-}
+        if (strcmp(aux, "rb+") == 0)
+            fseek(fh, pos * sizeof(hospede), 0);
+        fwrite(h, sizeof(hospede), 1, fh);
+    } // else
+    fclose(fh); // fora do ELSE por conta do ab ou rb+
+} // grava_hospede
+
+void atualiza_quarto(quarto *pq, int n_quarto)
+{
+    FILE *fq = NULL;
+    int qq, i;
+    qq = verifica_quarto();
+    if ((fq = fopen("quartos.bin", "rb+")) == NULL)
+        printf("\nErro\n\n");
+    else
+    {
+        for (i = 0; i < qq; i++)
+        {
+            fseek(fq, i * sizeof(quarto), 0);
+            fread(pq, sizeof(quarto), 1, fq);
+            if (pq->num == n_quarto)
+            {
+                pq->status = 'L';
+                fseek(fq, i * sizeof(quarto), 0); // volta para a posicao lida
+                fwrite(pq, sizeof(quarto), 1, fq);
+                i = qq; // forca a saida
+            } // if
+        } // for
+    } // else
+    fclose(fq);
+} // grava_quarto
 
 int busca_quarto(quarto *pq, int qq, char cat)
 {
     int i, pos = -1;
     FILE *fq = NULL;
 
-    if ((fq = fopen("hospedes.bin", "rb+")) == NULL)
+    if ((fq = fopen("quartos.bin", "rb+")) == NULL)
     {
         printf("\nErro\n\n");
     }
@@ -256,13 +285,13 @@ int busca_quarto(quarto *pq, int qq, char cat)
     {
         for (i = 0; i < qq; i++)
         {
-            fseek(fq, i * sizeof(hospede), 0);
-            fread(pq, sizeof(hospede), 1, fq);
+            fseek(fq, i * sizeof(quarto), 0);
+            fread(pq, sizeof(quarto), 1, fq);
 
             if (pq->categoria == cat && pq->status == 'L')
             {
                 pq->status = 'O';
-                fseek(fq, i * sizeof(hospede), 0);
+                fseek(fq, i * sizeof(quarto), 0);
                 fwrite(pq, sizeof(quarto), 1, fq);
                 pos = pq->num;
                 i = qq;
@@ -275,6 +304,29 @@ int busca_quarto(quarto *pq, int qq, char cat)
 
 int busca_hospede(hospede *ph, int n_quarto)
 {
+    int pos = -1, i, qh;
+    FILE *fh = NULL;
+    qh = verifica_hospede();
+    if ((fh = fopen("hospedes.bin", "rb+")) == NULL)
+        printf("\nErro\n\n");
+    else
+    {
+        for (i = 0; i < qh; i++)
+        {
+            fseek(fh, i * sizeof(hospede), 0);
+            fread(ph, sizeof(hospede), 1, fh);
+            if (ph->quarto == n_quarto)
+            {
+                ph->quarto = -1;
+                fseek(fh, i * sizeof(hospede), 0); // volta para a posicao lida
+                fwrite(ph, sizeof(hospede), 1, fh);
+                pos = i; // posicao do hospede
+                i = qh;  // forca a saida
+            } // if
+        } // for
+    } // else
+    fclose(fh);
+    return pos;
 }
 
 int busca_vago(hospede *ph, int qh)
@@ -306,12 +358,73 @@ int busca_vago(hospede *ph, int qh)
 
 void check_out(quarto *pq, hospede *ph)
 {
+    int n_quarto, achou;
+    float valor;
+
+    printf("\nQuarto a ser Finalizado: ");
+    scanf("%i", &n_quarto);
+    fflush(stdin);
+
+    achou = busca_hospede(ph, n_quarto);
+
+    if (achou == -1)
+    {
+        printf("\nQuarto Inválido\n\n");
+    }
+    else
+    {
+        if (ph->categoria == 'S')
+            valor = ph->dias * 85;
+        else
+            valor = ph->dias * ((ph->acompanhante) + 1) * 65;
+        printf("\nNome: %s\nAcompanhantes: %i\nCategoria: %c\nDias: %i\nValor a ser pago: %.2f\n\n", ph->nome, ph->acompanhante, ph->categoria, ph->dias, valor);
+        atualiza_quarto(pq, n_quarto);
+    }
+    system("pause");
 }
 
 void mostra_quarto(quarto *pq)
 {
+    int i, qq;
+    FILE *fq = NULL;
+
+    qq = verifica_quarto();
+
+    if ((fq = fopen("quartos.bin", "rb")) == NULL)
+        printf("\nErro\n\n");
+    else
+    {
+        for (i = 0; i < qq; i++)
+        {
+            fseek(fq, i * sizeof(quarto), 0);
+            fread(pq, sizeof(quarto), 1, pq);
+            printf("\nQuarto: %i\nCategoria: %c\nStatus: %c\n\n", pq->num, pq->categoria, pq->status);
+        } // for
+        fclose(fq);
+    } // else
+
+    system("pause");
 }
 
 void mostra_hospede(hospede *ph)
 {
+    int i, qh;
+    FILE *fh = NULL;
+
+    qh = verifica_hospede();
+
+    if ((fh = fopen("hospedes.bin", "rb")) == NULL)
+        printf("\nErro\n\n");
+    else
+    {
+        for (i = 0; i < qh; i++)
+        {
+            fseek(fh, i * sizeof(hospede), 0);
+            fread(ph, sizeof(hospede), 1, ph);
+            printf("\nQuarto: %i\nNome: %s\nAcompanhantes: %i\nCategoria: %c\nDias: %i\n\n", ph->quarto, ph->nome, ph->acompanhante, ph->categoria, ph->dias);
+        } // for
+        fclose(fh);
+    } // else
+
+    system("pause");
 }
