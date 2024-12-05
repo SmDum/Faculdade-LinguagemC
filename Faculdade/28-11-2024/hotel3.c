@@ -98,7 +98,6 @@ void aloca_hospede(hospede **ph, int qh)
 {
     if ((*ph = (hospede *)realloc(*ph, qh * sizeof(hospede))) == NULL)
     {
-        printf("\nErro 1\n\n");
         exit(1);
     }
 }
@@ -107,7 +106,6 @@ void aloca_quarto(quarto **pq, int qq)
 {
     if ((*pq = (quarto *)realloc(*pq, qq * sizeof(quarto))) == NULL)
     {
-        printf("\nErro 2\n\n");
         exit(1);
     }
 }
@@ -119,7 +117,6 @@ int verifica_hospede()
 
     if ((fh = fopen("hospedes.bin", "rb")) == NULL)
     {
-        printf("\nErro 0\n\n");
         return qtd;
     }
     else
@@ -138,7 +135,6 @@ int verifica_quarto()
 
     if ((fq = fopen("quartos.bin", "rb")) == NULL)
     {
-        printf("\nErro 3\n\n");
         return qtd;
     }
     else
